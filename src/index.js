@@ -31,34 +31,23 @@ function myStartup1(context) {
       res.send("asdasdasds")
     });
   }
-
-  const ImageSizes = new SimpleSchema({
-    large: {
+  const OwnerInfo = new SimpleSchema({
+    userId: {
       type: String,
-      label: "Large",
+      max: 30,
       optional: true,
     },
-    medium: {
+    image: {
       type: String,
-      label: "Medium",
+      max: 20,
       optional: true,
     },
-    original: {
+    name: {
       type: String,
-      label: "Original",
-      optional: true,
-    },
-    small: {
-      type: String,
-      label: "Small",
-      optional: true,
-    },
-    thumbnail: {
-      type: String,
-      label: "Thumbnail",
       optional: true,
     },
   });
+
 
   context.simpleSchemas.ProductVariant.extend({
     uploadedBy: OwnerInfo,
