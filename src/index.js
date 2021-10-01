@@ -103,8 +103,8 @@ console.log("publish product",productVariant);
  */
 export default async function register(app) {
   await app.registerPlugin({
-    label: "Image to S3",
-    name: "images-S3",
+    label: "api-plugin-seller",
+    name: "api-plugin-seller",
     version: pkg.version,
     functionsByType: {
       startup: [myStartup1],
