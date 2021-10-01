@@ -1,0 +1,43 @@
+extend type ProductVariant {
+  uploadedBy: uploadedBy
+  ancestorId:ID
+  
+}
+
+extend input ProductVariantInput {
+  uploadedBy: uploadedByinput
+}
+
+extend type CatalogProductVariant {
+  uploadedBy: uploadedBy
+  ancestorId:ID
+
+}
+
+
+type uploadedBy {
+  name:String
+  image:String
+  userId:ID
+ }
+
+input uploadedByinput {
+  name:String
+  image:String
+  userId:ID
+}
+
+input ImageInfoInput {
+  URLs: ImageSizesInput
+  priority: Int
+  _id: ID
+  productId: ID
+  variantId: ID
+}
+input ImageSizesInput {
+  large: String
+  medium: String
+  original: String
+  small: String
+  thumbnail: String
+}
