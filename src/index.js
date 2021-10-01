@@ -3,6 +3,7 @@ import SimpleSchema from "simpl-schema";
 import importAsString from "@reactioncommerce/api-utils/importAsString.js";
 const mySchema = importAsString("./schema.graphql");
 // import getMedia from "./utils/getMedia.js";
+import getVariantsByUserId from "./utils/getVariants.js";
 
 var _context = null;
 
