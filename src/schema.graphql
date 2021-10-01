@@ -26,3 +26,7 @@ input uploadedByinput {
   image:String
   userId:ID
 }
+
+extend type Account {
+productVariants:[ProductVariant]
+}
