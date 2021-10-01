@@ -29,4 +29,6 @@ input uploadedByinput {
 
 extend type Account {
 productVariants:[ProductVariant]
+identityVerified:Boolean
+
 }

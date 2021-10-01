@@ -10,10 +10,14 @@ var _context = null;
 const resolvers = {
   Account: {
      async productVariants(parent, args, context, info) {
-       console.log("parent",parent);
       let productVariant=await getVariantsByUserId(context, parent.userId, true, args);
       return productVariant;
-    }
+    },
+    async identityVerified(parent, args, context, info) {
+    //  let productVariant=await getVariantsByUserId(context, parent.userId, true, args);
+     return parent.profile.identityVerified?parent.profile.identityVerified:false;
+   }
+
   },
   ProductVariant:{
     async ancestorId (parent, args, context, info){
@@ -25,13 +29,7 @@ const resolvers = {
 function myStartup1(context) {
   _context = context;
   const { app, collections, rootUrl } = context;
-  if (app.expressApp) {
-    app.expressApp.post("/uploadByURL", function (req, res, next) {
-      console.log("body",req.body)
-      // write your callback code here.
-      res.send("asdasdasds")
-    });
-  }
+
   const OwnerInfo = new SimpleSchema({
     userId: {
       type: String,
@@ -79,7 +77,6 @@ function myPublishProductToCatalog(
       const productVariant = variants.find(
         (variant) => variant._id === catalogVariant.variantId
       );
-console.log("publish product",productVariant);
 
       catalogVariant.uploadedBy = productVariant.uploadedBy || null;
       catalogVariant.ancestorId=productVariant["ancestors"][0]?productVariant["ancestors"][0]:null;
