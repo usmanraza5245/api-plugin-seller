@@ -1,5 +1,5 @@
 {
-  "name": "@husamaz1994/reaction-variant-ownerinfo",
+  "name": "@husamaz1994/api-plugin-seller",
   "description": "Boilerplate Example plugin for the Reaction API",
   "version": "0.0.1",
   "main": "index.js",
@@ -7,12 +7,12 @@
   "engines": {
     "node": ">=12.14.1"
   },
-  "homepage": "https://github.com/blackspider1994/reaction-variant-ownerinfo",
-  "url": "https://github.com/blackspider1994/reaction-variant-ownerinfo",
+  "homepage": "https://github.com/blackspider1994/api-plugin-seller",
+  "url": "https://github.com/blackspider1994/api-plugin-seller",
   "email": "usama.sama@gmail.com",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/blackspider1994/reaction-variant-ownerinfo"
+    "url": "git+https://github.com/blackspider1994/api-plugin-seller"
   },
   "author": {
     "name": "Usama Zulfiqar",
@@ -21,7 +21,7 @@
   },
   "license": "Apache-2.0",
   "bugs": {
-    "url": "https://github.com/blackspider1994/reaction-variant-ownerinfo/issues"
+    "url": "https://github.com/blackspider1994/api-plugin-seller/issues"
   },
   "sideEffects": false,
   "dependencies": {
