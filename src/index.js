@@ -4,9 +4,8 @@ import importAsString from "@reactioncommerce/api-utils/importAsString.js";
 const mySchema = importAsString("./schema.graphql");
 // import getMedia from "./utils/getMedia.js";
 import getVariantsByUserId from "./utils/getVariants.js";
-
+import encodeOpaqueId from "@reactioncommerce/api-utils/encodeOpaqueId.js";
 var _context = null;
-
 const resolvers = {
   Account: {
      async productVariants(parent, args, context, info) {
@@ -17,19 +16,21 @@ const resolvers = {
     //  let productVariant=await getVariantsByUserId(context, parent.userId, true, args);
      return parent.profile.identityVerified?parent.profile.identityVerified:false;
    }
-
   },
   ProductVariant:{
     async ancestorId (parent, args, context, info){
       return parent.ancestors[0];
+    },
+    async parentId (parent, args, context, info){
+      
+      return encodeOpaqueId("reaction/product",parent.ancestors[0]);
+      //encode( encodeOpaqueId(parent.ancestors[0]))
     }
   }
-
 };
 function myStartup1(context) {
   _context = context;
   const { app, collections, rootUrl } = context;
-
   const OwnerInfo = new SimpleSchema({
     userId: {
       type: String,
@@ -46,26 +47,29 @@ function myStartup1(context) {
       optional: true,
     },
   });
-
-
   context.simpleSchemas.ProductVariant.extend({
     uploadedBy: OwnerInfo,
     ancestorId    :{
       type: String,
       optional: true,
     },
+    parentId    :{
+      type: String,
+      optional: true,
+    },
   });
-
   context.simpleSchemas.CatalogProductVariant.extend({
     uploadedBy: OwnerInfo,
     ancestorId    :{
       type: String,
       optional: true,
     },
-
+    parentId    :{
+      type: String,
+      optional: true,
+    },
   });
 }
-
 // The new myPublishProductToCatalog function parses our products,
 // gets the new uploadedBy attribute, and adds it to the corresponding catalog variant in preparation for publishing it to the catalog
 function myPublishProductToCatalog(
@@ -77,12 +81,11 @@ function myPublishProductToCatalog(
       const productVariant = variants.find(
         (variant) => variant._id === catalogVariant.variantId
       );
-
       catalogVariant.uploadedBy = productVariant.uploadedBy || null;
       catalogVariant.ancestorId=productVariant["ancestors"][0]?productVariant["ancestors"][0]:null;
+      // catalogVariant.parentId=productVariant["parentId"]?productVariant["parentId"]:null;
     });
 }
-
 /**
  * @summary Import and call this function to add this plugin to your API.
  * @param {ReactionAPI} app The ReactionAPI instance
