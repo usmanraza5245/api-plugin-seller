@@ -1,34 +1,27 @@
 extend type ProductVariant {
   uploadedBy: uploadedBy
   ancestorId:ID
-  
+   parentId:ID
 }
-
 extend input ProductVariantInput {
   uploadedBy: uploadedByinput
 }
-
 extend type CatalogProductVariant {
   uploadedBy: uploadedBy
   ancestorId:ID
-
+parentId:ID
 }
-
-
 type uploadedBy {
   name:String
   image:String
   userId:ID
  }
-
 input uploadedByinput {
   name:String
   image:String
   userId:ID
 }
-
 extend type Account {
 productVariants:[ProductVariant]
 identityVerified:Boolean
-
 }
