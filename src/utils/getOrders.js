@@ -26,10 +26,10 @@ export default async function getOrdersByUserId(
   // };
 
 
-  return Orders.aggregate( [ { $unwind : "$shipping" },{$unwind:"$shipping.items"},{
+  return Orders.aggregate( [ {
     $lookup: {
         from: "Products",
-        localField: "shipping.items.variantId",
+        localField: "shipping.items.0.variantId",
         foreignField: "_id",
         as: "productOrdered"
     }
