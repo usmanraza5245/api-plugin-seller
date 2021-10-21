@@ -2,31 +2,49 @@ import pkg from "../package.json";
 import SimpleSchema from "simpl-schema";
 import importAsString from "@reactioncommerce/api-utils/importAsString.js";
 const mySchema = importAsString("./schema.graphql");
-// import getMedia from "./utils/getMedia.js";
+import getOrdersByUserId from "./utils/getOrders.js";
 import getVariantsByUserId from "./utils/getVariants.js";
+
 import encodeOpaqueId from "@reactioncommerce/api-utils/encodeOpaqueId.js";
 var _context = null;
 const resolvers = {
   Account: {
-     async productVariants(parent, args, context, info) {
-      let productVariant=await getVariantsByUserId(context, parent.userId, true, args);
+    async productVariants(parent, args, context, info) {
+      let productVariant = await getVariantsByUserId(
+        context,
+        parent.userId,
+        true,
+        args
+      );
       return productVariant;
     },
     async identityVerified(parent, args, context, info) {
-    //  let productVariant=await getVariantsByUserId(context, parent.userId, true, args);
-     return parent.profile.identityVerified?parent.profile.identityVerified:false;
-   }
+      //  let productVariant=await getVariantsByUserId(context, parent.userId, true, args);
+      return parent.profile.identityVerified
+        ? parent.profile.identityVerified
+        : false;
+    },
+
+    async orderFulfillment(parent, args, context, info) {
+      let userOrders = await getOrdersByUserId(
+        context,
+        parent.userId,
+        true,
+        args
+      );
+      console.log("userOrders",userOrders);
+      return userOrders;
+    },
   },
-  ProductVariant:{
-    async ancestorId (parent, args, context, info){
+  ProductVariant: {
+    async ancestorId(parent, args, context, info) {
       return parent.ancestors[0];
     },
-    async parentId (parent, args, context, info){
-      
-      return encodeOpaqueId("reaction/product",parent.ancestors[0]);
+    async parentId(parent, args, context, info) {
+      return encodeOpaqueId("reaction/product", parent.ancestors[0]);
       //encode( encodeOpaqueId(parent.ancestors[0]))
-    }
-  }
+    },
+  },
 };
 function myStartup1(context) {
   _context = context;
@@ -49,22 +67,22 @@ function myStartup1(context) {
   });
   context.simpleSchemas.ProductVariant.extend({
     uploadedBy: OwnerInfo,
-    ancestorId    :{
+    ancestorId: {
       type: String,
       optional: true,
     },
-    parentId    :{
+    parentId: {
       type: String,
       optional: true,
     },
   });
   context.simpleSchemas.CatalogProductVariant.extend({
     uploadedBy: OwnerInfo,
-    ancestorId    :{
+    ancestorId: {
       type: String,
       optional: true,
     },
-    parentId    :{
+    parentId: {
       type: String,
       optional: true,
     },
@@ -82,7 +100,9 @@ function myPublishProductToCatalog(
         (variant) => variant._id === catalogVariant.variantId
       );
       catalogVariant.uploadedBy = productVariant.uploadedBy || null;
-      catalogVariant.ancestorId=productVariant["ancestors"][0]?productVariant["ancestors"][0]:null;
+      catalogVariant.ancestorId = productVariant["ancestors"][0]
+        ? productVariant["ancestors"][0]
+        : null;
       // catalogVariant.parentId=productVariant["parentId"]?productVariant["parentId"]:null;
     });
 }
@@ -102,7 +122,7 @@ export default async function register(app) {
     },
     graphQL: {
       schemas: [mySchema],
-      resolvers
+      resolvers,
     },
   });
 }
