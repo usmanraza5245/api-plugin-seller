@@ -50,8 +50,7 @@ const resolvers = {
   Mutation: {
     async updateAccountpayBookEntry(parent, args, context, info) {
       let updateResponse=await updateUserAccountBook(context,args.input);
-      console.log("updateResponse",updateResponse)
-      return { ...args.input };
+      return updateResponse;
     },
   },
 };
