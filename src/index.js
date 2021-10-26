@@ -4,6 +4,7 @@ import importAsString from "@reactioncommerce/api-utils/importAsString.js";
 const mySchema = importAsString("./schema.graphql");
 import getOrdersByUserId from "./utils/getOrders.js";
 import getVariantsByUserId from "./utils/getVariants.js";
+import updateUserAccountBook from "./utils/updateUserAccountBook.js";
 
 import encodeOpaqueId from "@reactioncommerce/api-utils/encodeOpaqueId.js";
 var _context = null;
@@ -32,7 +33,7 @@ const resolvers = {
         true,
         args
       );
-      console.log("userOrders",userOrders);
+      console.log("userOrders", userOrders);
       return userOrders;
     },
   },
@@ -45,7 +46,16 @@ const resolvers = {
       //encode( encodeOpaqueId(parent.ancestors[0]))
     },
   },
+  Query: {},
+  Mutation: {
+    async updateAccountpayBookEntry(parent, args, context, info) {
+      let updateResponse=await updateUserAccountBook(context,args.input);
+      console.log("updateResponse",updateResponse)
+      return { ...args.input };
+    },
+  },
 };
+
 function myStartup1(context) {
   _context = context;
   const { app, collections, rootUrl } = context;
@@ -62,6 +72,17 @@ function myStartup1(context) {
     },
     name: {
       type: String,
+      optional: true,
+    },
+  });
+  const AccountBook = new SimpleSchema({
+    AccountNo: {
+      type: String,
+      max: 30,
+      optional: true,
+    },
+    isActive: {
+      type: Boolean,
       optional: true,
     },
   });
@@ -86,6 +107,9 @@ function myStartup1(context) {
       type: String,
       optional: true,
     },
+  });
+  context.simpleSchemas.Account.extend({
+    AccountBook: AccountBook,
   });
 }
 // The new myPublishProductToCatalog function parses our products,

@@ -1,3 +1,28 @@
+input accountBookInput {
+  AccountTitle: String
+  swiftCode:String
+  AccountNo:String
+  isActive:Boolean
+  AccountId:ID!
+  AccountBookId:ID
+}
+
+type AccountBook {
+  _id:ID!
+  AccountTitle: String
+  swiftCode:String
+  AccountNo:String
+  isActive:Boolean
+}
+
+extend type Mutation {
+  updateAccountpayBookEntry(input:accountBookInput):AccountBook
+
+}
+extend input UpdateAccountInput  {
+  accountBook:accountBookInput
+}
+
 extend type ProductVariant {
   uploadedBy: uploadedBy
   ancestorId:ID
@@ -6,6 +31,7 @@ extend type ProductVariant {
 extend input ProductVariantInput {
   uploadedBy: uploadedByinput
 }
+
 extend type CatalogProductVariant {
   uploadedBy: uploadedBy
   ancestorId:ID
@@ -25,4 +51,6 @@ extend type Account {
 productVariants:[ProductVariant]
 identityVerified:Boolean
 orderFulfillment:[Order]
+AccountBook:AccountBook
 }
+

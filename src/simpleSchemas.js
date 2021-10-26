@@ -55,6 +55,31 @@ export const OwnerInfo = new SimpleSchema({
     optional: true
   }
 });
+export const accountBook=new SimpleSchema({
+  AccountTitle: {
+    type: String,
+    max: 20,
+
+    optional: true,
+  },
+  swiftCode: {
+    type: String,
+    optional: true,
+    max: 20,
+
+  },
+  AccountNo: {
+    type: String,
+    max: 20,
+
+    optional: true,
+  },
+  isActive: {
+    type: Boolean,
+    optional: true,
+  }
+  
+});
 /**
  * @name ShippingParcel
  * @memberof Schemas
