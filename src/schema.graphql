@@ -51,6 +51,6 @@ extend type Account {
 productVariants:[ProductVariant]
 identityVerified:Boolean
 orderFulfillment:[Order]
-AccountBook:AccountBook
+AccountBook:[AccountBook]
 }
 

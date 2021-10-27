@@ -25,6 +25,11 @@ const resolvers = {
         ? parent.profile.identityVerified
         : false;
     },
+    async AccountBook(parent, args, context, info) {
+      return parent.profile.accountBook
+        ? parent.profile.accountBook
+        : [];
+    },
 
     async orderFulfillment(parent, args, context, info) {
       let userOrders = await getOrdersByUserId(
@@ -33,7 +38,6 @@ const resolvers = {
         true,
         args
       );
-      console.log("userOrders", userOrders);
       return userOrders;
     },
   },
