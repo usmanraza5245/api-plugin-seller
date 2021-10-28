@@ -19,9 +19,7 @@ extend type Mutation {
   updateAccountpayBookEntry(input:accountBookInput):AccountBook
 
 }
-extend input UpdateAccountInput  {
-  accountBook:accountBookInput
-}
+
 
 extend type ProductVariant {
   uploadedBy: uploadedBy
