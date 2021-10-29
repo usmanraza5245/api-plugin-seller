@@ -1,7 +1,7 @@
 {
   "name": "@husamaz1994/api-plugin-seller",
   "description": "Boilerplate Example plugin for the Reaction API",
-  "version": "0.0.3beta",
+  "version": "0.0.4",
   "main": "index.js",
   "type": "module",
   "engines": {
