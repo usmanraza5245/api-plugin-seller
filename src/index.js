@@ -78,17 +78,7 @@ function myStartup1(context) {
       optional: true,
     },
   });
-  const AccountBook = new SimpleSchema({
-    AccountNo: {
-      type: String,
-      max: 30,
-      optional: true,
-    },
-    isActive: {
-      type: Boolean,
-      optional: true,
-    },
-  });
+
   context.simpleSchemas.ProductVariant.extend({
     uploadedBy: OwnerInfo,
     ancestorId: {
@@ -111,9 +101,7 @@ function myStartup1(context) {
       optional: true,
     },
   });
-  context.simpleSchemas.Account.extend({
-    AccountBook: AccountBook,
-  });
+
 }
 // The new myPublishProductToCatalog function parses our products,
 // gets the new uploadedBy attribute, and adds it to the corresponding catalog variant in preparation for publishing it to the catalog
