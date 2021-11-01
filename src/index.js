@@ -4,6 +4,7 @@ import importAsString from "@reactioncommerce/api-utils/importAsString.js";
 const mySchema = importAsString("./schema.graphql");
 import getOrdersByUserId from "./utils/getOrders.js";
 import getVariantsByUserId from "./utils/getVariants.js";
+import getUserByUserId from "./utils/getUser.js";
 import updateUserAccountBook from "./utils/updateUserAccountBook.js";
 
 import encodeOpaqueId from "@reactioncommerce/api-utils/encodeOpaqueId.js";
@@ -26,9 +27,7 @@ const resolvers = {
         : false;
     },
     async AccountBook(parent, args, context, info) {
-      return parent.profile.accountBook
-        ? parent.profile.accountBook
-        : [];
+      return parent.profile.accountBook ? parent.profile.accountBook : [];
     },
 
     async orderFulfillment(parent, args, context, info) {
@@ -50,10 +49,25 @@ const resolvers = {
       //encode( encodeOpaqueId(parent.ancestors[0]))
     },
   },
+  CatalogProductVariant: {
+    async uploadedBy(parent, args, context, info) {
+      // console.log("uploadedBy parent", parent);
+      console.log("uploadedBy userId", parent.uploadedBy.userId);
+      if(parent.uploadedBy.userId){
+        let userInfo = await getUserByUserId(context, parent.uploadedBy.userId);
+        console.log("userinfo data", userInfo);
+        return {
+          name: userInfo.name?userInfo.name:userInfo.profile.name?userInfo.profile.name:userInfo.username?userInfo.username:"Anonymous",
+          userId:userInfo.userId ,
+          Image: userInfo.profile.picture,
+        };
+      }
+    },
+  },
   Query: {},
   Mutation: {
     async updateAccountpayBookEntry(parent, args, context, info) {
-      let updateResponse=await updateUserAccountBook(context,args.input);
+      let updateResponse = await updateUserAccountBook(context, args.input);
       return updateResponse;
     },
   },
@@ -101,7 +115,6 @@ function myStartup1(context) {
       optional: true,
     },
   });
-
 }
 // The new myPublishProductToCatalog function parses our products,
 // gets the new uploadedBy attribute, and adds it to the corresponding catalog variant in preparation for publishing it to the catalog
