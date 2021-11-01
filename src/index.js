@@ -57,7 +57,7 @@ const resolvers = {
         let userInfo = await getUserByUserId(context, parent.uploadedBy.userId);
         console.log("userinfo data", userInfo);
         return {
-          name: userInfo.name?userInfo.name:userInfo.profile.name?userInfo.profile.name:userInfo.username?userInfo.username:"Anonymous",
+          name: userInfo.name?userInfo.name:userInfo.profile.name?userInfo.profile.name:userInfo.username?userInfo.username:userInfo.profile.username?userInfo.profile.username:"Anonymous",
           userId:userInfo.userId ,
           Image: userInfo.profile.picture,
         };
