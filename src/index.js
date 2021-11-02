@@ -6,6 +6,7 @@ import getOrdersByUserId from "./utils/getOrders.js";
 import getVariantsByUserId from "./utils/getVariants.js";
 import getUserByUserId from "./utils/getUser.js";
 import updateUserAccountBook from "./utils/updateUserAccountBook.js";
+import updateUserFulfillmentMethod from "./utils/updateUserFulfillmentMethod.js";
 
 import encodeOpaqueId from "@reactioncommerce/api-utils/encodeOpaqueId.js";
 var _context = null;
@@ -39,6 +40,10 @@ const resolvers = {
       );
       return userOrders;
     },
+    AvailableFulfillmentMethods(parent, args, context, info){
+      let reaction_response=parent.fulfillmentMethods.map(id=>{ return encodeOpaqueIdFunction("reaction/shipping",id)})
+      return reaction_response;
+    }
   },
   ProductVariant: {
     async ancestorId(parent, args, context, info) {
@@ -53,12 +58,19 @@ const resolvers = {
     async uploadedBy(parent, args, context, info) {
       // console.log("uploadedBy parent", parent);
       console.log("uploadedBy userId", parent.uploadedBy.userId);
-      if(parent.uploadedBy.userId){
+      if (parent.uploadedBy.userId) {
         let userInfo = await getUserByUserId(context, parent.uploadedBy.userId);
-        console.log("userinfo data", userInfo);
         return {
-          name: userInfo.name?userInfo.name:userInfo.profile.name?userInfo.profile.name:userInfo.username?userInfo.username:userInfo.profile.username?userInfo.profile.username:"Anonymous",
-          userId:userInfo.userId ,
+          name: userInfo.name
+            ? userInfo.name
+            : userInfo.profile.name
+            ? userInfo.profile.name
+            : userInfo.username
+            ? userInfo.username
+            : userInfo.profile.username
+            ? userInfo.profile.username
+            : "Anonymous",
+          userId: userInfo.userId,
           Image: userInfo.profile.picture,
         };
       }
@@ -70,9 +82,16 @@ const resolvers = {
       let updateResponse = await updateUserAccountBook(context, args.input);
       return updateResponse;
     },
+    async updateAvailableFulfillmentMethodEntry(parent, args, context, info) {
+      let updateResponse = await updateUserFulfillmentMethod(context, args.input);
+      let reaction_response=updateResponse.map(id=>{ return encodeOpaqueIdFunction("reaction/shipping",id)})
+      return reaction_response;
+    },
   },
 };
-
+function encodeOpaqueIdFunction(source,id){
+  return encodeOpaqueId(source, id)
+}
 function myStartup1(context) {
   _context = context;
   const { app, collections, rootUrl } = context;
