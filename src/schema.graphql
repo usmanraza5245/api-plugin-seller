@@ -48,6 +48,7 @@ type uploadedBy {
   name:String
   image:String
   userId:ID
+  FulfillmentMethods:[AvailableFulfillmentMethod]
  }
 input uploadedByinput {
   name:String

@@ -60,6 +60,8 @@ const resolvers = {
       console.log("uploadedBy userId", parent.uploadedBy.userId);
       if (parent.uploadedBy.userId) {
         let userInfo = await getUserByUserId(context, parent.uploadedBy.userId);
+        let FulfillmentMethods=userInfo.fulfillmentMethods.map(id=>{ return encodeOpaqueIdFunction("reaction/shipping",id)})
+
         return {
           name: userInfo.name
             ? userInfo.name
@@ -72,6 +74,7 @@ const resolvers = {
             : "Anonymous",
           userId: userInfo.userId,
           Image: userInfo.profile.picture,
+          FulfillmentMethods:FulfillmentMethods
         };
       }
     },
