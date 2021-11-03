@@ -41,7 +41,7 @@ const resolvers = {
       return userOrders;
     },
     AvailableFulfillmentMethods(parent, args, context, info){
-      let reaction_response=parent.fulfillmentMethods.map(id=>{ return encodeOpaqueIdFunction("reaction/shipping",id)})
+      let reaction_response=parent.fulfillmentMethods.map(id=>{ return encodeOpaqueIdFunction("reaction/fulfillmentMethod",id)})
       return reaction_response;
     }
   },
@@ -60,7 +60,7 @@ const resolvers = {
       console.log("uploadedBy userId", parent.uploadedBy.userId);
       if (parent.uploadedBy.userId) {
         let userInfo = await getUserByUserId(context, parent.uploadedBy.userId);
-        let FulfillmentMethods=userInfo.fulfillmentMethods.map(id=>{ return encodeOpaqueIdFunction("reaction/shipping",id)})
+        let FulfillmentMethods=userInfo.fulfillmentMethods.map(id=>{ return encodeOpaqueIdFunction("reaction/fulfillmentMethod",id)})
 
         return {
           name: userInfo.name
@@ -87,7 +87,7 @@ const resolvers = {
     },
     async updateAvailableFulfillmentMethodEntry(parent, args, context, info) {
       let updateResponse = await updateUserFulfillmentMethod(context, args.input);
-      let reaction_response=updateResponse.map(id=>{ return encodeOpaqueIdFunction("reaction/shipping",id)})
+      let reaction_response=updateResponse.map(id=>{ return encodeOpaqueIdFunction("reaction/fulfillmentMethod",id)})
       return reaction_response;
     },
   },
