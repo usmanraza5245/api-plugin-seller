@@ -41,7 +41,7 @@ const resolvers = {
       return userOrders;
     },
     AvailableFulfillmentMethods(parent, args, context, info){
-      let reaction_response=parent.fulfillmentMethods&&parent.fulfillmentMethods.length?parent.fulfillmentMethods.map(id=>{ return encodeOpaqueIdFunction("reaction/fulfillmentMethod",id)}):[]
+      let reaction_response=parent.fulfillmentMethods&&parent.fulfillmentMethods.length>0?parent.fulfillmentMethods.map(id=>{ return encodeOpaqueIdFunction("reaction/fulfillmentMethod",id)}):[]
       return reaction_response;
     }
   },
