@@ -63,15 +63,7 @@ const resolvers = {
         let FulfillmentMethods=userInfo.fulfillmentMethods&&userInfo.fulfillmentMethods.length>0?userInfo.fulfillmentMethods.map(id=>{ return encodeOpaqueIdFunction("reaction/fulfillmentMethod",id)}):[];
 
         return {
-          name: userInfo.name
-            ? userInfo.name
-            : userInfo.profile.name
-            ? userInfo.profile.name
-            : userInfo.username
-            ? userInfo.username
-            : userInfo.profile.username
-            ? userInfo.profile.username
-            : "Anonymous",
+          name: userInfo.profile.username,
           userId: userInfo.userId,
           Image: userInfo.profile.picture,
           FulfillmentMethods:FulfillmentMethods
