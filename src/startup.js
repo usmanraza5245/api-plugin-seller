@@ -1,5 +1,5 @@
 function myStartup(context) {
-    context.simpleSchemas.ProductVariant.extend({
+    context.simpleSchemas.Product.extend({
       uploadedBy: {
         type: Number,
         min: 0,
@@ -7,7 +7,7 @@ function myStartup(context) {
       }
     });
   
-    context.simpleSchemas.CatalogProductVariant.extend({
+    context.simpleSchemas.CatalogProduct.extend({
       uploadedBy: {
         type: Number,
         min: 0,

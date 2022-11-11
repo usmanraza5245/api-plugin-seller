@@ -30,16 +30,16 @@ extend type Mutation {
 }
 
 
-extend type ProductVariant {
+extend type Product {
   uploadedBy: uploadedBy
   ancestorId:ID
    parentId:ID
 }
-extend input ProductVariantInput {
+extend input ProductInput {
   uploadedBy: uploadedByinput
 }
 
-extend type CatalogProductVariant {
+extend type CatalogProduct {
   uploadedBy: uploadedBy
   ancestorId:ID
 parentId:ID
@@ -56,7 +56,7 @@ input uploadedByinput {
   userId:ID
 }
 extend type Account {
-productVariants:[ProductVariant]
+Product:[Product]
 identityVerified:Boolean
 orderFulfillment:[Order]
 AccountBook:[AccountBook]

@@ -1,4 +1,6 @@
 import pkg from "../package.json";
+import cors from "cors";
+import bodyParser from "body-parser";
 import SimpleSchema from "simpl-schema";
 import importAsString from "@reactioncommerce/api-utils/importAsString.js";
 const mySchema = importAsString("./schema.graphql");
@@ -12,7 +14,7 @@ import encodeOpaqueId from "@reactioncommerce/api-utils/encodeOpaqueId.js";
 var _context = null;
 const resolvers = {
   Account: {
-    async productVariants(parent, args, context, info) {
+    async Product(parent, args, context, info) {
       let productVariant = await getVariantsByUserId(
         context,
         parent.userId,
@@ -45,7 +47,7 @@ const resolvers = {
       return reaction_response;
     }
   },
-  ProductVariant: {
+  Product: {
     async ancestorId(parent, args, context, info) {
       return parent.ancestors[0];
     },
@@ -54,7 +56,7 @@ const resolvers = {
       //encode( encodeOpaqueId(parent.ancestors[0]))
     },
   },
-  CatalogProductVariant: {
+  CatalogProduct: {
     async uploadedBy(parent, args, context, info) {
       // console.log("uploadedBy parent", parent);
       console.log("uploadedBy userId", parent.uploadedBy.userId);
@@ -107,7 +109,7 @@ function myStartup1(context) {
     },
   });
 
-  context.simpleSchemas.ProductVariant.extend({
+  context.simpleSchemas.Product.extend({
     uploadedBy: OwnerInfo,
     ancestorId: {
       type: String,
@@ -118,7 +120,7 @@ function myStartup1(context) {
       optional: true,
     },
   });
-  context.simpleSchemas.CatalogProductVariant.extend({
+  context.simpleSchemas.CatalogProduct.extend({
     uploadedBy: OwnerInfo,
     ancestorId: {
       type: String,
@@ -129,24 +131,103 @@ function myStartup1(context) {
       optional: true,
     },
   });
-}
+    app.expressApp.use(cors());
+    app.expressApp.use(bodyParser.json());
+    app.expressApp.use(bodyParser.urlencoded({ extended: true }));
+    app.expressApp.post("/upload", async (req, res) => {
+      try{
+        let _id = req.body.userId;
+        let seller = {
+          "_id" : "y4PTFE8LEFbsnEjkP",
+          "name" : "seller",
+          "slug" : "seller",
+          "createdAt" : "2022-07-18T08:33:50.835Z",
+          "createdBy" : null,
+          "shopId" : "",
+          "updatedAt" : "2022-07-18T08:33:51.852Z",
+          "permissions" : [
+            "reaction:legacy:accounts/add:address-books",
+            "reaction:legacy:accounts/read",
+            "reaction:legacy:accounts/remove:address-books",
+            "reaction:legacy:accounts/update:address-books",
+            "reaction:legacy:accounts/update:currency",
+            "reaction:legacy:accounts/update:emails",
+            "reaction:legacy:accounts/update:language",
+            "reaction:legacy:carts:/update",
+            "reaction:legacy:fulfillment/read",
+            "reaction:legacy:inventory/read",
+            "reaction:legacy:inventory/update:settings",
+            "reaction:legacy:inventory/update",
+            "reaction:legacy:media/update",
+            "reaction:legacy:orders/approve:payment",
+            "reaction:legacy:orders/cancel:item",
+            "reaction:legacy:orders/capture:payment",
+            "reaction:legacy:orders/move:item",
+            "reaction:legacy:orders/read",
+            "reaction:legacy:orders/refund:payment",
+            "reaction:legacy:orders/update",
+            "reaction:legacy:products/archive",
+            "reaction:legacy:products/clone",
+            "reaction:legacy:products/create",
+            "reaction:legacy:products/publish",
+            "reaction:legacy:products/read",
+            "reaction:legacy:products/update:prices",
+            "reaction:legacy:products/update",
+            "reaction:legacy:shipping-rates/update:settings",
+            "reaction:legacy:shippingMethods/create",
+            "reaction:legacy:shippingMethods/delete",
+            "reaction:legacy:shippingMethods/read",
+            "reaction:legacy:shippingMethods/update",
+            "reaction:legacy:shippingRestrictions/create",
+            "reaction:legacy:shippingRestrictions/delete",
+            "reaction:legacy:shippingRestrictions/read",
+            "reaction:legacy:shippingRestrictions/update"
+          ]
+        }
+        let userData = await collections.Groups.find({ name: seller.name }).toArray()
+        if( userData?.length ){
+          console.log("this is the sample api for giving permissions.", userData);
+          await collections.Accounts.updateOne(
+            { _id },
+            { $set: { groups: [userData._id]}}
+          )
+          res.status(200).send({ success: true, messsage: "permissions added.", userData: userData })
+  
+        } else {
+          let addedGroup = await collections.Groups.insertOne(seller)
+          console.log("addedGroup", addedGroup.insertedId);
+          await collections.Accounts.updateOne(
+            { _id },
+            { $set: { groups: [addedGroup.insertedId]}}
+          )
+          res.status(200).send({ success: true, messsage: "permissions added.", userData: userData })
+        }
+      } catch( err ){
+        console.log("error", err);
+        res.status(500).send({ success: false, messsage: "Server Error." })
+      }
+    })
+  }
 // The new myPublishProductToCatalog function parses our products,
-// gets the new uploadedBy attribute, and adds it to the corresponding catalog variant in preparation for publishing it to the catalog
+// gets the new uploadedBy attribute, and adds it to the corresposellernding catalog variant in preparation for publishing it to the catalog
 function myPublishProductToCatalog(
   catalogProduct,
   { context, product, shop, variants }
 ) {
-  catalogProduct.variants &&
-    catalogProduct.variants.map((catalogVariant) => {
-      const productVariant = variants.find(
-        (variant) => variant._id === catalogVariant.variantId
-      );
-      catalogVariant.uploadedBy = productVariant.uploadedBy || null;
-      catalogVariant.ancestorId = productVariant["ancestors"][0]
-        ? productVariant["ancestors"][0]
-        : null;
-      // catalogVariant.parentId=productVariant["parentId"]?productVariant["parentId"]:null;
-    });
+  let { collections } = context;
+  // console.log("check product", catalogProduct, product, collections)
+  catalogProduct.uploadedBy = product.uploadedBy || null;
+  // catalogProduct.variants &&
+  //   catalogProduct.variants.map((catalogVariant) => {
+  //     const productVariant = variants.find(
+  //       (variant) => variant._id === catalogVariant.variantId
+  //     );
+  //     catalogVariant.uploadedBy = productVariant.uploadedBy || null;
+  //     catalogVariant.ancestorId = productVariant["ancestors"][0]
+  //       ? productVariant["ancestors"][0]
+  //       : null;
+  //     // catalogVariant.parentId=productVariant["parentId"]?productVariant["parentId"]:null;
+  //   });
 }
 /**
  * @summary Import and call this function to add this plugin to your API.
