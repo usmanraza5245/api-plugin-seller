@@ -22,7 +22,7 @@ export default async function getVariantsByUserId(
 
   const selector = {
     "uploadedBy.userId":ownerId,
-    type: "product",
+    type: "simple",
   };
 console.log(selector)
   // Only include visible variants if `false`
