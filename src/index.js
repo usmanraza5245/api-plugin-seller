@@ -134,7 +134,7 @@ function myStartup1(context) {
     app.expressApp.use(cors());
     app.expressApp.use(bodyParser.json());
     app.expressApp.use(bodyParser.urlencoded({ extended: true }));
-    app.expressApp.post("/upload", async (req, res) => {
+    app.expressApp.post("/permission", async (req, res) => {
       try{
         let _id = req.body.userId;
         let seller = {
