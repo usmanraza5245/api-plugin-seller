@@ -186,11 +186,12 @@ function myStartup1(context) {
         }
         let userData = await collections.Groups.find({ name: seller.name }).toArray()
         if( userData?.length ){
-          console.log("this is the sample api for giving permissions.", userData);
-          await collections.Accounts.updateOne(
+          console.log("this is the sample api for giving permissions.", userData, await collections.Accounts.find({ _id }).toArray());
+          let updatedUser = await collections.Accounts.updateOne(
             { _id },
-            { $set: { groups: [userData._id]}}
+            { $set: { groups: [userData[0]._id]}}
           )
+          console.log("updatedUser", updatedUser);
           res.status(200).send({ success: true, messsage: "permissions added.", userData: userData })
   
         } else {
