@@ -4,7 +4,8 @@ function myStartup(context) {
         type: Number,
         min: 0,
         optional: true
-      }
+      },
+      upVotes: Number
     });
   
     context.simpleSchemas.CatalogProduct.extend({
@@ -12,7 +13,8 @@ function myStartup(context) {
         type: Number,
         min: 0,
         optional: true
-      }
+      },
+      upVotes: Number
     })
   }
 

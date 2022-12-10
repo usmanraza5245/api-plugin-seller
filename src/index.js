@@ -119,6 +119,9 @@ function myStartup1(context) {
       type: String,
       optional: true,
     },
+    upVotes: {
+      type: Number
+    }
   });
   context.simpleSchemas.CatalogProduct.extend({
     uploadedBy: OwnerInfo,
@@ -130,6 +133,9 @@ function myStartup1(context) {
       type: String,
       optional: true,
     },
+    upVotes: {
+      type: Number
+    }
   });
     app.expressApp.use(cors());
     app.expressApp.use(bodyParser.json());
@@ -216,8 +222,10 @@ function myPublishProductToCatalog(
   { context, product, shop, variants }
 ) {
   let { collections } = context;
+  console.log("cataLogProduct", catalogProduct)
   // console.log("check product", catalogProduct, product, collections)
   catalogProduct.uploadedBy = product.uploadedBy || null;
+  catalogProduct.upVotes = product.upVotes || 0
   // catalogProduct.variants &&
   //   catalogProduct.variants.map((catalogVariant) => {
   //     const productVariant = variants.find(
