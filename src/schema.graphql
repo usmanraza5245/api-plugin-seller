@@ -32,18 +32,18 @@ extend type Mutation {
 
 extend type Product {
   uploadedBy: uploadedBy
-  upVotes: Int!
+  upVotes: Int
   ancestorId:ID
    parentId:ID
 }
 extend input ProductInput {
   uploadedBy: uploadedByinput
-  upVotes: Int!
+  upVotes: Int
 }
 
 extend type CatalogProduct {
   uploadedBy: uploadedBy
-  upVotes: Int!
+  upVotes: Int
   ancestorId:ID
   parentId:ID
 }
