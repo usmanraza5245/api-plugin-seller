@@ -22,8 +22,13 @@ input AvailableFulfillmentMethodInput {
   }
   
 scalar AvailableFulfillmentMethod 
-
+type deleteOutput {
+  success: Boolean
+  message: String
+  status: Int
+}
 extend type Mutation {
+  deleteAccount(userId: String!): deleteOutput
   updateAccountpayBookEntry(input:accountBookInput):AccountBook
   updateAvailableFulfillmentMethodEntry(input:AvailableFulfillmentMethodInput):[AvailableFulfillmentMethod]
 

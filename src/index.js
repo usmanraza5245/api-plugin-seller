@@ -84,6 +84,38 @@ const resolvers = {
       let reaction_response=updateResponse.length>0?updateResponse.map(id=>{ return encodeOpaqueIdFunction("reaction/fulfillmentMethod",id)}):[]
       return reaction_response;
     },
+    async deleteAccount(parent, args, context, info) {
+      try {
+        let { userId } = args;
+        let {  Products, Accounts, users, Bids, Catalog } = context.collections;
+        console.log("userId", userId)
+        let deletedBids = await Bids.remove({$or: [ { soldBy:  userId }, { createdBy: userId } ]});
+        let deletedCatalog = await Catalog.remove({ "product.uploadedBy.userId": userId });
+        let deletedProducts = await Products.remove({ "uploadedBy.userId": userId });
+        let deletedUser = await users.remove({ _id: userId });
+        let deletedAccount = await Accounts.remove({ userId })
+        console.log("deletedBids", deletedBids, deletedCatalog, deletedProducts, deletedUser, deletedAccount);
+        if( deletedUser?.deletedCount > 0 || deletedAccount?.deletedCount > 0 )
+          return {
+            success: true,
+            message: "deleted successfully.",
+            status: 200
+          }
+        else
+          return {
+            success: false,
+            message: "please refresh again!",
+            status: 200
+          } 
+      } catch(err){
+        console.log("error", err)
+        return {
+          success: false,
+          message: "Server Error.",
+          status: 500
+        }
+      }
+    }
   },
 };
 function encodeOpaqueIdFunction(source,id){
