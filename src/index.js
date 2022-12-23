@@ -115,6 +115,37 @@ const resolvers = {
           status: 500
         }
       }
+    },
+    async updateUserPassword(parent, args, context, info) {
+      try {
+        let { email, password } = args.input;
+        let { users } = context.collections;
+        console.log("email, password", email, password);
+        let updatedPassword = await users.updateOne(
+          { "emails.address": email },
+          { $set: { "services.password.bcrypt": password } }
+        );
+        console.log("updatedPassword", updatedPassword);
+        if( updatedPassword?.result?.nModified > 0 )
+          return {
+            success: true,
+            message: "updated successfully.",
+            status: 200
+          }
+        else
+          return {
+            success: false,
+            message: "please refresh again!",
+            status: 200
+          } 
+      } catch(err){
+        console.log("error", err)
+        return {
+          success: false,
+          message: "Server Error.",
+          status: 500
+        }
+      }
     }
   },
 };

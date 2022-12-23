@@ -27,8 +27,18 @@ type deleteOutput {
   message: String
   status: Int
 }
+input updatePassword {
+  email: String!
+  password: String!
+}
+type updatePasswordOutPut {
+  success: Boolean
+  message: String
+  status: Int
+}
 extend type Mutation {
   deleteAccount(userId: String!): deleteOutput
+  updateUserPassword(input: updatePassword): updatePasswordOutPut
   updateAccountpayBookEntry(input:accountBookInput):AccountBook
   updateAvailableFulfillmentMethodEntry(input:AvailableFulfillmentMethodInput):[AvailableFulfillmentMethod]
 
