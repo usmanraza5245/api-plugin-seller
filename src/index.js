@@ -184,6 +184,9 @@ function myStartup1(context) {
     },
     upVotes: {
       type: Number
+    },
+    productViews: {
+      type: Number
     }
   });
   context.simpleSchemas.CatalogProduct.extend({

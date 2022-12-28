@@ -48,12 +48,14 @@ extend type Mutation {
 extend type Product {
   uploadedBy: uploadedBy
   upVotes: Int
+  productViews: Int
   ancestorId:ID
    parentId:ID
 }
 extend input ProductInput {
   uploadedBy: uploadedByinput
   upVotes: Int
+  productViews: Int
 }
 
 extend type CatalogProduct {
