@@ -7,6 +7,7 @@ const mySchema = importAsString("./schema.graphql");
 import getOrdersByUserId from "./utils/getOrders.js";
 import getVariantsByUserId from "./utils/getVariants.js";
 import getUserByUserId from "./utils/getUser.js";
+import decodeOpaqueId from "@reactioncommerce/api-utils/decodeOpaqueId.js";
 import updateUserAccountBook from "./utils/updateUserAccountBook.js";
 import updateUserFulfillmentMethod from "./utils/updateUserFulfillmentMethod.js";
 
@@ -146,6 +147,37 @@ const resolvers = {
           status: 500
         }
       }
+    },
+    async addProductVieworCart(parent, args, context, info) {
+      try {
+        let { Products } = context.collections;
+        let { productId, flag } = args.input;
+        let _id = decodeOpaqueId(productId)?.id;
+        console.log("productId", _id)
+        if( flag === "cart" ) {
+          Products.updateOne(
+            { _id },
+            { $inc: { totalCarts: 1 } }
+          )
+        } else {
+          Products.updateOne(
+            { _id },
+            { $inc: { productViews: 1 } }
+          )
+        }
+        return {
+          success: true,
+          message: "Successfull.",
+          status: 200
+        }
+      } catch(err) {
+        console.log("Error", err);
+        return {
+          success: false,
+          message: "Server Error.",
+          status: 500
+        }
+      }
     }
   },
 };
@@ -186,6 +218,9 @@ function myStartup1(context) {
       type: Number
     },
     productViews: {
+      type: Number
+    },
+    totalCarts: {
       type: Number
     }
   });

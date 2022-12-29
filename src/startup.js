@@ -6,7 +6,8 @@ function myStartup(context) {
         optional: true
       },
       upVotes: Number,
-      productViews: Number
+      productViews: Number,
+      totalCarts: Number
     });
   
     context.simpleSchemas.CatalogProduct.extend({
