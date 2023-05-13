@@ -43,10 +43,15 @@ const resolvers = {
       );
       return userOrders;
     },
-    AvailableFulfillmentMethods(parent, args, context, info){
-      let reaction_response=parent.fulfillmentMethods&&parent.fulfillmentMethods.length>0?parent.fulfillmentMethods.map(id=>{ return encodeOpaqueIdFunction("reaction/fulfillmentMethod",id)}):[]
+    AvailableFulfillmentMethods(parent, args, context, info) {
+      let reaction_response =
+        parent.fulfillmentMethods && parent.fulfillmentMethods.length > 0
+          ? parent.fulfillmentMethods.map((id) => {
+              return encodeOpaqueIdFunction("reaction/fulfillmentMethod", id);
+            })
+          : [];
       return reaction_response;
-    }
+    },
   },
   Product: {
     async ancestorId(parent, args, context, info) {
@@ -63,13 +68,18 @@ const resolvers = {
       console.log("uploadedBy userId", parent.uploadedBy.userId);
       if (parent.uploadedBy.userId) {
         let userInfo = await getUserByUserId(context, parent.uploadedBy.userId);
-        let FulfillmentMethods=userInfo.fulfillmentMethods&&userInfo.fulfillmentMethods.length>0?userInfo.fulfillmentMethods.map(id=>{ return encodeOpaqueIdFunction("reaction/fulfillmentMethod",id)}):[];
+        let FulfillmentMethods =
+          userInfo.fulfillmentMethods && userInfo.fulfillmentMethods.length > 0
+            ? userInfo.fulfillmentMethods.map((id) => {
+                return encodeOpaqueIdFunction("reaction/fulfillmentMethod", id);
+              })
+            : [];
 
         return {
           name: userInfo.profile.username,
           userId: userInfo.userId,
           Image: userInfo.profile.picture,
-          FulfillmentMethods:FulfillmentMethods
+          FulfillmentMethods: FulfillmentMethods,
         };
       }
     },
@@ -81,40 +91,61 @@ const resolvers = {
       return updateResponse;
     },
     async updateAvailableFulfillmentMethodEntry(parent, args, context, info) {
-      let updateResponse = await updateUserFulfillmentMethod(context, args.input);
-      let reaction_response=updateResponse.length>0?updateResponse.map(id=>{ return encodeOpaqueIdFunction("reaction/fulfillmentMethod",id)}):[]
+      let updateResponse = await updateUserFulfillmentMethod(
+        context,
+        args.input
+      );
+      let reaction_response =
+        updateResponse.length > 0
+          ? updateResponse.map((id) => {
+              return encodeOpaqueIdFunction("reaction/fulfillmentMethod", id);
+            })
+          : [];
       return reaction_response;
     },
     async deleteAccount(parent, args, context, info) {
       try {
         let { userId } = args;
-        let {  Products, Accounts, users, Bids, Catalog } = context.collections;
-        console.log("userId", userId)
-        let deletedBids = await Bids.remove({$or: [ { soldBy:  userId }, { createdBy: userId } ]});
-        let deletedCatalog = await Catalog.remove({ "product.uploadedBy.userId": userId });
-        let deletedProducts = await Products.remove({ "uploadedBy.userId": userId });
+        let { Products, Accounts, users, Bids, Catalog } = context.collections;
+        console.log("userId", userId);
+        let deletedBids = await Bids.remove({
+          $or: [{ soldBy: userId }, { createdBy: userId }],
+        });
+        let deletedCatalog = await Catalog.remove({
+          "product.uploadedBy.userId": userId,
+        });
+        let deletedProducts = await Products.remove({
+          "uploadedBy.userId": userId,
+        });
         let deletedUser = await users.remove({ _id: userId });
-        let deletedAccount = await Accounts.remove({ userId })
-        console.log("deletedBids", deletedBids, deletedCatalog, deletedProducts, deletedUser, deletedAccount);
-        if( deletedUser?.deletedCount > 0 || deletedAccount?.deletedCount > 0 )
+        let deletedAccount = await Accounts.remove({ userId });
+        console.log(
+          "deletedBids",
+          deletedBids,
+          deletedCatalog,
+          deletedProducts,
+          deletedUser,
+          deletedAccount
+        );
+        if (deletedUser?.deletedCount > 0 || deletedAccount?.deletedCount > 0)
           return {
             success: true,
             message: "deleted successfully.",
-            status: 200
-          }
+            status: 200,
+          };
         else
           return {
             success: false,
             message: "please refresh again!",
-            status: 200
-          } 
-      } catch(err){
-        console.log("error", err)
+            status: 200,
+          };
+      } catch (err) {
+        console.log("error", err);
         return {
           success: false,
           message: "Server Error.",
-          status: 500
-        }
+          status: 500,
+        };
       }
     },
     async updateUserPassword(parent, args, context, info) {
@@ -127,25 +158,25 @@ const resolvers = {
           { $set: { "services.password.bcrypt": password } }
         );
         console.log("updatedPassword", updatedPassword);
-        if( updatedPassword?.result?.nModified > 0 )
+        if (updatedPassword?.result?.nModified > 0)
           return {
             success: true,
             message: "updated successfully.",
-            status: 200
-          }
+            status: 200,
+          };
         else
           return {
             success: false,
             message: "please refresh again!",
-            status: 200
-          } 
-      } catch(err){
-        console.log("error", err)
+            status: 200,
+          };
+      } catch (err) {
+        console.log("error", err);
         return {
           success: false,
           message: "Server Error.",
-          status: 500
-        }
+          status: 500,
+        };
       }
     },
     async addProductVieworCart(parent, args, context, info) {
@@ -153,36 +184,30 @@ const resolvers = {
         let { Products } = context.collections;
         let { productId, flag } = args.input;
         let _id = decodeOpaqueId(productId)?.id;
-        console.log("productId", _id)
-        if( flag === "cart" ) {
-          Products.updateOne(
-            { _id },
-            { $inc: { totalCarts: 1 } }
-          )
+        console.log("productId", _id);
+        if (flag === "cart") {
+          Products.updateOne({ _id }, { $inc: { totalCarts: 1 } });
         } else {
-          Products.updateOne(
-            { _id },
-            { $inc: { productViews: 1 } }
-          )
+          Products.updateOne({ _id }, { $inc: { productViews: 1 } });
         }
         return {
           success: true,
           message: "Successfull.",
-          status: 200
-        }
-      } catch(err) {
+          status: 200,
+        };
+      } catch (err) {
         console.log("Error", err);
         return {
           success: false,
           message: "Server Error.",
-          status: 500
-        }
+          status: 500,
+        };
       }
-    }
+    },
   },
 };
-function encodeOpaqueIdFunction(source,id){
-  return encodeOpaqueId(source, id)
+function encodeOpaqueIdFunction(source, id) {
+  return encodeOpaqueId(source, id);
 }
 function myStartup1(context) {
   _context = context;
@@ -206,6 +231,14 @@ function myStartup1(context) {
 
   context.simpleSchemas.Product.extend({
     uploadedBy: OwnerInfo,
+    referenceTrack: {
+      type: String,
+      optional: true,
+    },
+    tokenCount: {
+      type: Number,
+      optional: true,
+    },
     ancestorId: {
       type: String,
       optional: true,
@@ -215,17 +248,21 @@ function myStartup1(context) {
       optional: true,
     },
     upVotes: {
-      type: Number
+      type: Number,
     },
     productViews: {
-      type: Number
+      type: Number,
     },
     totalCarts: {
-      type: Number
-    }
+      type: Number,
+    },
   });
   context.simpleSchemas.CatalogProduct.extend({
     uploadedBy: OwnerInfo,
+    tokenCount: {
+      type: Number,
+      optional: true,
+    },
     ancestorId: {
       type: String,
       optional: true,
@@ -235,87 +272,100 @@ function myStartup1(context) {
       optional: true,
     },
     upVotes: {
-      type: Number
+      type: Number,
+    },
+  });
+  app.expressApp.use(cors());
+  app.expressApp.use(bodyParser.json());
+  app.expressApp.use(bodyParser.urlencoded({ extended: true }));
+  app.expressApp.post("/permission", async (req, res) => {
+    try {
+      let _id = req.body.userId;
+      let seller = {
+        _id: "y4PTFE8LEFbsnEjkP",
+        name: "seller",
+        slug: "seller",
+        createdAt: "2022-07-18T08:33:50.835Z",
+        createdBy: null,
+        shopId: "",
+        updatedAt: "2022-07-18T08:33:51.852Z",
+        permissions: [
+          "reaction:legacy:accounts/add:address-books",
+          "reaction:legacy:accounts/read",
+          "reaction:legacy:accounts/remove:address-books",
+          "reaction:legacy:accounts/update:address-books",
+          "reaction:legacy:accounts/update:currency",
+          "reaction:legacy:accounts/update:emails",
+          "reaction:legacy:accounts/update:language",
+          "reaction:legacy:carts:/update",
+          "reaction:legacy:fulfillment/read",
+          "reaction:legacy:inventory/read",
+          "reaction:legacy:inventory/update:settings",
+          "reaction:legacy:inventory/update",
+          "reaction:legacy:media/update",
+          "reaction:legacy:orders/approve:payment",
+          "reaction:legacy:orders/cancel:item",
+          "reaction:legacy:orders/capture:payment",
+          "reaction:legacy:orders/move:item",
+          "reaction:legacy:orders/read",
+          "reaction:legacy:orders/refund:payment",
+          "reaction:legacy:orders/update",
+          "reaction:legacy:products/archive",
+          "reaction:legacy:products/clone",
+          "reaction:legacy:products/create",
+          "reaction:legacy:products/publish",
+          "reaction:legacy:products/read",
+          "reaction:legacy:products/update:prices",
+          "reaction:legacy:products/update",
+          "reaction:legacy:shipping-rates/update:settings",
+          "reaction:legacy:shippingMethods/create",
+          "reaction:legacy:shippingMethods/delete",
+          "reaction:legacy:shippingMethods/read",
+          "reaction:legacy:shippingMethods/update",
+          "reaction:legacy:shippingRestrictions/create",
+          "reaction:legacy:shippingRestrictions/delete",
+          "reaction:legacy:shippingRestrictions/read",
+          "reaction:legacy:shippingRestrictions/update",
+        ],
+      };
+      let userData = await collections.Groups.find({
+        name: seller.name,
+      }).toArray();
+      if (userData?.length) {
+        console.log(
+          "this is the sample api for giving permissions.",
+          userData,
+          await collections.Accounts.find({ _id }).toArray()
+        );
+        let updatedUser = await collections.Accounts.updateOne(
+          { _id },
+          { $set: { groups: [userData[0]._id] } }
+        );
+        console.log("updatedUser", updatedUser);
+        res.status(200).send({
+          success: true,
+          messsage: "permissions added.",
+          userData: userData,
+        });
+      } else {
+        let addedGroup = await collections.Groups.insertOne(seller);
+        console.log("addedGroup", addedGroup.insertedId);
+        await collections.Accounts.updateOne(
+          { _id },
+          { $set: { groups: [addedGroup.insertedId] } }
+        );
+        res.status(200).send({
+          success: true,
+          messsage: "permissions added.",
+          userData: userData,
+        });
+      }
+    } catch (err) {
+      console.log("error", err);
+      res.status(500).send({ success: false, messsage: "Server Error." });
     }
   });
-    app.expressApp.use(cors());
-    app.expressApp.use(bodyParser.json());
-    app.expressApp.use(bodyParser.urlencoded({ extended: true }));
-    app.expressApp.post("/permission", async (req, res) => {
-      try{
-        let _id = req.body.userId;
-        let seller = {
-          "_id" : "y4PTFE8LEFbsnEjkP",
-          "name" : "seller",
-          "slug" : "seller",
-          "createdAt" : "2022-07-18T08:33:50.835Z",
-          "createdBy" : null,
-          "shopId" : "",
-          "updatedAt" : "2022-07-18T08:33:51.852Z",
-          "permissions" : [
-            "reaction:legacy:accounts/add:address-books",
-            "reaction:legacy:accounts/read",
-            "reaction:legacy:accounts/remove:address-books",
-            "reaction:legacy:accounts/update:address-books",
-            "reaction:legacy:accounts/update:currency",
-            "reaction:legacy:accounts/update:emails",
-            "reaction:legacy:accounts/update:language",
-            "reaction:legacy:carts:/update",
-            "reaction:legacy:fulfillment/read",
-            "reaction:legacy:inventory/read",
-            "reaction:legacy:inventory/update:settings",
-            "reaction:legacy:inventory/update",
-            "reaction:legacy:media/update",
-            "reaction:legacy:orders/approve:payment",
-            "reaction:legacy:orders/cancel:item",
-            "reaction:legacy:orders/capture:payment",
-            "reaction:legacy:orders/move:item",
-            "reaction:legacy:orders/read",
-            "reaction:legacy:orders/refund:payment",
-            "reaction:legacy:orders/update",
-            "reaction:legacy:products/archive",
-            "reaction:legacy:products/clone",
-            "reaction:legacy:products/create",
-            "reaction:legacy:products/publish",
-            "reaction:legacy:products/read",
-            "reaction:legacy:products/update:prices",
-            "reaction:legacy:products/update",
-            "reaction:legacy:shipping-rates/update:settings",
-            "reaction:legacy:shippingMethods/create",
-            "reaction:legacy:shippingMethods/delete",
-            "reaction:legacy:shippingMethods/read",
-            "reaction:legacy:shippingMethods/update",
-            "reaction:legacy:shippingRestrictions/create",
-            "reaction:legacy:shippingRestrictions/delete",
-            "reaction:legacy:shippingRestrictions/read",
-            "reaction:legacy:shippingRestrictions/update"
-          ]
-        }
-        let userData = await collections.Groups.find({ name: seller.name }).toArray()
-        if( userData?.length ){
-          console.log("this is the sample api for giving permissions.", userData, await collections.Accounts.find({ _id }).toArray());
-          let updatedUser = await collections.Accounts.updateOne(
-            { _id },
-            { $set: { groups: [userData[0]._id]}}
-          )
-          console.log("updatedUser", updatedUser);
-          res.status(200).send({ success: true, messsage: "permissions added.", userData: userData })
-  
-        } else {
-          let addedGroup = await collections.Groups.insertOne(seller)
-          console.log("addedGroup", addedGroup.insertedId);
-          await collections.Accounts.updateOne(
-            { _id },
-            { $set: { groups: [addedGroup.insertedId]}}
-          )
-          res.status(200).send({ success: true, messsage: "permissions added.", userData: userData })
-        }
-      } catch( err ){
-        console.log("error", err);
-        res.status(500).send({ success: false, messsage: "Server Error." })
-      }
-    })
-  }
+}
 // The new myPublishProductToCatalog function parses our products,
 // gets the new uploadedBy attribute, and adds it to the corresposellernding catalog variant in preparation for publishing it to the catalog
 function myPublishProductToCatalog(
@@ -323,10 +373,10 @@ function myPublishProductToCatalog(
   { context, product, shop, variants }
 ) {
   let { collections } = context;
-  console.log("cataLogProduct", catalogProduct)
+  console.log("cataLogProduct", catalogProduct);
   // console.log("check product", catalogProduct, product, collections)
   catalogProduct.uploadedBy = product.uploadedBy || null;
-  catalogProduct.upVotes = product.upVotes || 0
+  catalogProduct.upVotes = product.upVotes || 0;
   // catalogProduct.variants &&
   //   catalogProduct.variants.map((catalogVariant) => {
   //     const productVariant = variants.find(

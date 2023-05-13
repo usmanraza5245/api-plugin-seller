@@ -1,27 +1,27 @@
 input accountBookInput {
   AccountTitle: String
-  swiftCode:String
-  AccountNo:String
-  isActive:Boolean
-  AccountId:ID!
-  AccountBookId:ID
+  swiftCode: String
+  AccountNo: String
+  isActive: Boolean
+  AccountId: ID!
+  AccountBookId: ID
 }
 
 type AccountBook {
-  _id:ID!
+  _id: ID!
   AccountTitle: String
-  swiftCode:String
-  AccountNo:String
-  isActive:Boolean
+  swiftCode: String
+  AccountNo: String
+  isActive: Boolean
 }
 
 input AvailableFulfillmentMethodInput {
-  AccountId:ID!
-  FulfillmentMethodId:ID!
-  status:Boolean!
-  }
-  
-scalar AvailableFulfillmentMethod 
+  AccountId: ID!
+  FulfillmentMethodId: ID!
+  status: Boolean!
+}
+
+scalar AvailableFulfillmentMethod
 type deleteOutput {
   success: Boolean
   message: String
@@ -49,23 +49,28 @@ type output {
 extend type Mutation {
   deleteAccount(userId: String!): deleteOutput
   updateUserPassword(input: updatePassword): updatePasswordOutPut
-  updateAccountpayBookEntry(input:accountBookInput):AccountBook
-  updateAvailableFulfillmentMethodEntry(input:AvailableFulfillmentMethodInput):[AvailableFulfillmentMethod]
+  updateAccountpayBookEntry(input: accountBookInput): AccountBook
+  updateAvailableFulfillmentMethodEntry(
+    input: AvailableFulfillmentMethodInput
+  ): [AvailableFulfillmentMethod]
   addProductVieworCart(input: VieworCartInput): output
 }
-
 
 extend type Product {
   uploadedBy: uploadedBy
   upVotes: Int
   productViews: Int
   totalCarts: Int
-  ancestorId:ID
-   parentId:ID
+  ancestorId: ID
+  referenceTrack: String
+  tokenCount: Int
+  parentId: ID
 }
 extend input ProductInput {
   uploadedBy: uploadedByinput
   upVotes: Int
+  referenceTrack: String
+  tokenCount: Int
   productViews: Int
   totalCarts: Int
 }
@@ -73,25 +78,25 @@ extend input ProductInput {
 extend type CatalogProduct {
   uploadedBy: uploadedBy
   upVotes: Int
-  ancestorId:ID
-  parentId:ID
+  ancestorId: ID
+  tokenCount: Int
+  parentId: ID
 }
 type uploadedBy {
-  name:String
-  image:String
-  userId:ID
-  FulfillmentMethods:[AvailableFulfillmentMethod]
- }
+  name: String
+  image: String
+  userId: ID
+  FulfillmentMethods: [AvailableFulfillmentMethod]
+}
 input uploadedByinput {
-  name:String
-  image:String
-  userId:ID
+  name: String
+  image: String
+  userId: ID
 }
 extend type Account {
-Product:[Product]
-identityVerified:Boolean
-orderFulfillment:[Order]
-AccountBook:[AccountBook]
-AvailableFulfillmentMethods:[AvailableFulfillmentMethod]
+  Product: [Product]
+  identityVerified: Boolean
+  orderFulfillment: [Order]
+  AccountBook: [AccountBook]
+  AvailableFulfillmentMethods: [AvailableFulfillmentMethod]
 }
-
