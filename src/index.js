@@ -16,6 +16,7 @@ var _context = null;
 const resolvers = {
   Account: {
     async Product(parent, args, context, info) {
+      console.log("parent data...", parent);
       let productVariant = await getVariantsByUserId(
         context,
         parent.userId,

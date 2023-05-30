@@ -1,3 +1,5 @@
+import { getUserByOpportunityId } from "./UserService.js";
+
 /**
  *
  * @method getVariants
@@ -20,11 +22,56 @@ export default async function getVariantsByUserId(
   const { collections } = context;
   const { Products } = collections;
 
-  const selector = {
-    "uploadedBy.userId":ownerId,
-    type: "simple",
-  };
-console.log(selector)
+  let userServiceId = "";
+  try {
+    // const variables = {
+    //   userId: ownerId,
+    // };
+    const userResponse = await getUserByOpportunityId(ownerId);
+    const { data } = userResponse;
+    if (data && Object.keys(data).length > 0) {
+      userServiceId =
+        data &&
+        data.data &&
+        data.data.getUserByOpportunityId &&
+        data.data.getUserByOpportunityId.user &&
+        data.data.getUserByOpportunityId.user._id;
+    }
+    console.log("user Response...", data.data.getUserByOpportunityId);
+  } catch (err) {
+    console.log("error...", err);
+  }
+  // const selector = {
+  //   "uploadedBy.userId": ownerId,
+  //   "metafields.valueType": ownerId,
+  //   type: "simple",
+  // };
+  let selector;
+  if (userServiceId) {
+    selector = {
+      $and: [
+        {
+          type: "simple",
+          $or: [
+            { "uploadedBy.userId": ownerId },
+            {
+              metafields: {
+                $elemMatch: { valueType: userServiceId, key: "collaborator" },
+              },
+            },
+          ],
+        },
+      ],
+    };
+  } else {
+    selector = {
+      "uploadedBy.userId": ownerId,
+      type: "simple",
+    };
+  }
+  console.log("owner id...", ownerId);
+  console.log("user id...", userServiceId);
+  console.log("selector...", selector);
   // Only include visible variants if `false`
   // Otherwise both hidden and visible will be shown
   // if (shouldIncludeHidden === false) {
