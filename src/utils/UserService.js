@@ -2,6 +2,7 @@ import axios from "axios";
 
 export const getUserByOpportunityId = async (userId) => {
   console.log("user on getUserByOpportunityId is ...", userId);
+  console.log('user service url...', process.env.)
   let data = JSON.stringify({
     query: `query getUserByOpportunityId($userId: String!){
     getUserByOpportunityId(id:$userId){
@@ -38,7 +39,7 @@ export const getUserByOpportunityId = async (userId) => {
   let config = {
     method: "post",
     maxBodyLength: Infinity,
-    url: "https://dev.unitedmarket.com/user",
+    url: process.env.USER_SERVICE_URL,
     headers: {
       "Content-Type": "application/json",
     },
