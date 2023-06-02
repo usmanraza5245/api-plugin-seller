@@ -27,7 +27,7 @@ export default async function getVariantsByUserId(
     // const variables = {
     //   userId: ownerId,
     // };
-    const userResponse = await getUserByOpportunityId(ownerId.toString());
+    const userResponse = await getUserByOpportunityId(ownerId?.trim());
     const { data } = userResponse;
     if (data && Object.keys(data).length > 0) {
       userServiceId =
