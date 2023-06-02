@@ -2,7 +2,7 @@ import axios from "axios";
 
 export const getUserByOpportunityId = async (userId) => {
   console.log("user on getUserByOpportunityId is ...", userId);
-  console.log('user service url...', process.env.)
+  // console.log('user service url...', process.env.)
   let data = JSON.stringify({
     query: `query getUserByOpportunityId($userId: String!){
     getUserByOpportunityId(id:$userId){
