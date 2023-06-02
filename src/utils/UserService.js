@@ -1,6 +1,7 @@
 import axios from "axios";
 
 export const getUserByOpportunityId = async (userId) => {
+  console.log("user on getUserByOpportunityId is ...", userId);
   let data = JSON.stringify({
     query: `query getUserByOpportunityId($userId: String!){
     getUserByOpportunityId(id:$userId){
